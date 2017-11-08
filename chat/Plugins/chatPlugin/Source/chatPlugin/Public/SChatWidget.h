@@ -6,6 +6,9 @@
 #include "Widgets/SCompoundWidget.h"
 #include "SlateBasics.h"
 
+unsigned const DEFAULT_SERVER_PORT = 50012; //Changed the default server port so that it does not clash with client port during broadcast scanning for servers
+unsigned const DEFAULT_CLIENT_PORT = 60013;
+
 struct FSChatMsg // Struct to hold the message data to be passed between classes
 {
 	UPROPERTY() // UProperty means this variable will be replicated

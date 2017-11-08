@@ -39,7 +39,8 @@ void SChatWidget::Construct(const FArguments& InArgs)
 				.ClearKeyboardFocusOnCommit(true)
 				.Text(FText::FromString(""))
 				.ColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.9f)) 
-				.HintText(FText::FromString("Please Enter your IP Address:")) 
+				//.HintText(FText::FromString("Please Enter your IP Address:"))
+				.HintText(FText::FromString("Do you want to run a client or server (C/S)?"))
 			]
 		]
 	];
@@ -143,43 +144,102 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 			newmessage.Init(1, FText::FromString("Me"), NFText); 
 			AddMessage(newmessage);
 
-			count++;
-
-			if (count == 1)
+			if (!m_UDPinstance->m_bConnected)
 			{
-				//uncomment later
-				//m_UDPinstance->MyReceivingIP = NFText.ToString();
-				m_UDPinstance->MyReceivingPort = FCString::Atoi(*NFText.ToString());
+				if (count == 0)
+				{
+					if (*NFText.ToString() == FString(TEXT("S")) || *NFText.ToString() == FString(TEXT("s")) )
+					{
+						m_UDPinstance->m_bServer = true;
+						UE_LOG(LogTemp, Warning, TEXT("SERVER SERVER SERVER"));	
 
-				FString MyChosenSocketName = FString(TEXT("mySocket"));
-				//int32 MyReceivingPort = 60012;
-				//m_UDPinstance->StartUDPReceiver(MyChosenSocketName, m_UDPinstance->MyReceivingIP, MyReceivingPort);
+						//Receiver******************************************************************************
+						FString MyChosenSocketName = FString(TEXT("mySocket"));
+						int32 MyReceivingPort = DEFAULT_SERVER_PORT;
+						//FString MyReceivingIP = FString(TEXT("127.0.0.1"));
 
-				FString MyReceivingIP = FString(TEXT("127.0.0.1"));
-				m_UDPinstance->StartUDPReceiver(MyChosenSocketName, MyReceivingIP, m_UDPinstance->MyReceivingPort);
+						m_UDPinstance->StartUDPReceiver(MyChosenSocketName, m_UDPinstance->MyReceivingIP, MyReceivingPort);
 
-				ChatInput->SetHintText(FText::FromString("Please enter your friend's IP address: "));
-			}
-			else if (count == 2)
-			{
-				//m_UDPinstance->TheirReceiverIP = NFText.ToString();
-				m_UDPinstance->TheirReceiverPort = FCString::Atoi(*NFText.ToString());
+						//Sender******************************************************************************
+						//FString TheirChosenSocketName = FString(TEXT("theirSocket"));
+						//int32 TheirReceiverPort = DEFAULT_CLIENT_PORT;
+						//FString TheirReceiverIP = FString(TEXT("127.0.0.1"));
+						//m_UDPinstance->StartUDPSender(TheirChosenSocketName, TheirReceiverIP, m_UDPinstance->TheirReceiverPort);
 
-				FString TheirChosenSocketName = FString(TEXT("theirSocket"));
-				//int32 TheirReceiverPort = 50012;
-				//m_UDPinstance->StartUDPSender(TheirChosenSocketName, m_UDPinstance->TheirReceiverIP, TheirReceiverPort);
+						ChatInput->SetHintText(FText::FromString("I am the server. Please do not type in here."));
+
+						m_UDPinstance->m_myName = FString(TEXT("Server"));
+					}
+					else
+					{
+						//client
+						ChatInput->SetHintText(FText::FromString("What is your name? "));
+						
+						
+					}
+				}
+				else if (count == 1 && !m_UDPinstance->m_bServer)
+				{
+					//Receiver******************************************************************************
+					//uncomment later
+					//m_UDPinstance->MyReceivingIP = NFText.ToString();
+					//m_UDPinstance->MyReceivingPort = FCString::Atoi(*NFText.ToString());
+
+					m_UDPinstance->m_myName = NFText.ToString();
+
+					//FString MyChosenSocketName = FString(TEXT("mySocket"));
+					//int32 MyReceivingPort = DEFAULT_CLIENT_PORT;
+					////m_UDPinstance->StartUDPReceiver(MyChosenSocketName, m_UDPinstance->MyReceivingIP, MyReceivingPort);
+
+					//FString MyReceivingIP = FString(TEXT("127.0.0.1"));
+					//m_UDPinstance->StartUDPReceiver(MyChosenSocketName, MyReceivingIP, m_UDPinstance->MyReceivingPort);
+
+					ChatInput->SetHintText(FText::FromString("Please enter your unique port number (Suggested value 60012 - 60022): "));
+				}
+				else if (count == 2 && !m_UDPinstance->m_bServer)
+				{
+					m_UDPinstance->MyReceivingPort = FCString::Atoi(*NFText.ToString());
+
+					FString MyChosenSocketName = FString(TEXT("mySocket"));
+					//FString MyReceivingIP = FString(TEXT("127.0.0.1"));
+					m_UDPinstance->StartUDPReceiver(MyChosenSocketName, m_UDPinstance->MyReceivingIP, m_UDPinstance->MyReceivingPort);
+
+					ChatInput->SetHintText(FText::FromString("Please enter the Server's IP address: "));
+				}
+				else if (count == 3 && !m_UDPinstance->m_bServer)
+				{
+					FString TheirReceiverIP = NFText.ToString();
+					//m_UDPinstance->TheirReceiverPort = FCString::Atoi(*NFText.ToString());
+
+					FString TheirChosenSocketName = FString(TEXT("theirSocket"));
+					int32 TheirReceiverPort = DEFAULT_SERVER_PORT;
+					m_UDPinstance->StartUDPSender(TheirChosenSocketName, TheirReceiverIP, TheirReceiverPort);
+					//FString TheirReceiverIP = FString(TEXT("127.0.0.1"));
+					//m_UDPinstance->StartUDPSender(TheirChosenSocketName, TheirReceiverIP, m_UDPinstance->TheirReceiverPort);
+
+					m_UDPinstance->UDPSender_SendString(m_UDPinstance->m_myName);
+
+					ChatInput->SetHintText(FText::FromString("Type your messages here"));
+
+					m_UDPinstance->m_bConnected = true;
 
 
-				FString TheirReceiverIP = FString(TEXT("127.0.0.1"));
-				m_UDPinstance->StartUDPSender(TheirChosenSocketName, TheirReceiverIP, m_UDPinstance->TheirReceiverPort);
-
-				ChatInput->SetHintText(FText::FromString("Type your messages here"));
+				}
+				else
+				{
+					m_UDPinstance->UDPSender_SendString(NFText.ToString());
+				}
 			}
 			else
 			{
+				//ChatInput->SetHintText(FText::FromString("Type your messages here"));
 				m_UDPinstance->UDPSender_SendString(NFText.ToString());
-			}
 
+				//if server, send to all
+				//if client, send to server
+			}
+			
+			count++;
 			//FSlateApplication::Get().SetKeyboardFocus(ChatInput);
 		}
 		ChatInput->SetText(FText()); // clear the chat box now were done with it		

@@ -53,10 +53,14 @@ void FchatPluginModule::StartupModule()
 	SenderSocket = NULL;
 	ListenSocket = NULL;
 	m_bConnected = false;
+	m_pConnectedClients = new std::map<FString, TClientDetails>;
 }
 
 void FchatPluginModule::ShutdownModule()
 {
+	//FString message = m_myName + FString(TEXT(" just left the chat."));
+	//UDPSender_SendString(message);
+
 	if (SenderSocket)
 	{
 		SenderSocket->Close();
@@ -65,10 +69,13 @@ void FchatPluginModule::ShutdownModule()
 
 	UE_LOG(LogTemp, Warning, TEXT("ShutdownModule"));
 
-	UDPReceiver->Stop();
+	if (UDPReceiver)
+	{
+		UDPReceiver->Stop();
 
-	delete UDPReceiver;
-	UDPReceiver = nullptr;
+		delete UDPReceiver;
+		UDPReceiver = nullptr;
+	}
 
 	if (ListenSocket)
 	{
@@ -87,6 +94,16 @@ void FchatPluginModule::ShutdownModule()
 
 TSharedRef<SDockTab> FchatPluginModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
+	bool canBind = false;
+	TSharedRef<FInternetAddr> localIp = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(*GLog, canBind);
+
+	if (localIp->IsValid())
+	{
+		GLog->Log(localIp->ToString(false)); // if you want to append the port (true) or not (false).
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *localIp->ToString(true)  );
+		MyReceivingIP = localIp->ToString(false);
+	}
+
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
@@ -143,6 +160,8 @@ bool FchatPluginModule::StartUDPSender(const FString& YourChosenSocketName, cons
 	SenderSocket->SetReceiveBufferSize(SendSize, SendSize);
 
 	UE_LOG(LogTemp, Warning, TEXT("\n\n\n~~~~~~~~~~~~~StartUDPSender~~~~~~~~~~~~~~~~\n\n\n"));
+	UE_LOG(LogTemp, Warning, TEXT("%i"), ThePort);
+
 
 	return true;
 }
@@ -156,16 +175,24 @@ bool FchatPluginModule::UDPSender_SendString(FString ToSend)
 		return false;
 	}
 
-	int32 BytesSent = 0;
+	FIPv4Address Addr;
+	FIPv4Address::Parse(MyReceivingIP, Addr);
+
+	//Create Socket
+	FIPv4Endpoint Endpoint(Addr, MyReceivingPort);
 
 	FAnyCustomData NewData;
-	NewData.Name = ToSend;
+	NewData.Name = *m_myName;
+	NewData.Message = ToSend;
+	NewData.Port = MyReceivingPort;
+	NewData.ipAddress = Endpoint;
 
 	FArrayWriter Writer;
 	Writer << NewData; 
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *NewData.Name);
 
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *NewData.Name.ToString());
+	int32 BytesSent = 0;
 	SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *RemoteAddr);
 
 	if (BytesSent <= 0)
@@ -177,6 +204,44 @@ bool FchatPluginModule::UDPSender_SendString(FString ToSend)
 	}
 
 	ScreenMsg("UDP~ Send Succcess! Bytes Sent = ", BytesSent);
+
+	UE_LOG(LogTemp, Warning, TEXT("Remote Address PORT"));
+	UE_LOG(LogTemp, Warning, TEXT("%i"), RemoteAddr->GetPort());
+
+	UE_LOG(LogTemp, Warning, TEXT("Remote Address Platform PORT"));
+	UE_LOG(LogTemp, Warning, TEXT("%i"), RemoteAddr->GetPlatformPort());
+
+	return true;
+}
+
+//used by the server
+bool FchatPluginModule::UDPSender_SendString(FString ToSend, TSharedPtr<FInternetAddr> _RemoteAddr, FName _name)
+{
+	if (!SenderSocket)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No sender socket"));
+		return false;
+	}
+
+	int32 BytesSent = 0;
+
+	FAnyCustomData NewData;
+	NewData.Name = _name;
+	NewData.Message = ToSend;
+	//NewData.Port = MyReceivingPort;
+
+	FArrayWriter Writer;
+	Writer << NewData;
+
+	SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *_RemoteAddr);
+
+	if (BytesSent <= 0)
+	{
+		const FString Str = "Socket is valid but the receiver received 0 bytes, make sure it is listening properly!";
+		UE_LOG(LogTemp, Error, TEXT("%s"), *Str);
+		ScreenMsg(Str);
+		return false;
+	}
 
 	return true;
 }
@@ -200,9 +265,18 @@ bool FchatPluginModule::StartUDPReceiver(const FString& YourChosenSocketName, co
 		.BoundToEndpoint(Endpoint)
 		.WithReceiveBufferSize(BufferSize);
 
+	if (!ListenSocket)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Listen Socket Error"));
+	}
 
 	FTimespan ThreadWaitTime = FTimespan::FromMilliseconds(100);
 	UDPReceiver = new FUdpSocketReceiver(ListenSocket, ThreadWaitTime, TEXT("UDP RECEIVER"));
+
+	if (!UDPReceiver)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UDP Receiver Error"));
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("new socket"));
 
@@ -224,13 +298,132 @@ void FchatPluginModule::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4E
 	*ArrayReaderPtr << Data;
 
 	//print it out
-	UE_LOG(LogTemp, Error, TEXT("%s"), *Data.Name);
-	ScreenMsg("Received message:", *Data.Name);
+	UE_LOG(LogTemp, Error, TEXT("%s"), *Data.Name.ToString());
+	ScreenMsg("Received message:", *Data.Name.ToString());
 
-	FSChatMsg newmessage; // make a new struct to send for replication
-	newmessage.Init(1, FText::FromString("Friend"), FText::FromString(Data.Name)); // initialize the message struct for replication
-	ChatWidget->AddMessage(newmessage);
+	//UE_LOG(LogTemp, Warning, TEXT("Endpoint TO String"));
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *EndPt.ToString());
+	//UE_LOG(LogTemp, Error, TEXT("Endpoint TO Text"));
+	//UE_LOG(LogTemp, Error, TEXT("%s"), *EndPt.ToText().ToString());
+	//127.0.0.1:57934
+	
+	if (m_bServer)
+	{
+		std::pair<std::map<FString, TClientDetails>::iterator, bool> ret;
+
+		TSharedPtr<FInternetAddr> _RemoteAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+
+		bool isValid;
+		_RemoteAddr->SetIp(*Data.ipAddress.ToString(), isValid);
+		_RemoteAddr->SetPort(Data.Port);
+
+		TClientDetails _clientDetails;
+		_clientDetails.m_endPoint = EndPt;
+		_clientDetails.m_strName = Data.Name.ToString();
+		_clientDetails.m_RemoteAddr = _RemoteAddr;
+
+		ret = m_pConnectedClients->insert(std::pair<FString, TClientDetails>(EndPt.ToString(), _clientDetails));
+
+		UE_LOG(LogTemp, Error, TEXT("Endpoint TO Text"));
+		UE_LOG(LogTemp, Error, TEXT("%s"), *EndPt.ToText().ToString());
+
+		if (ret.second == false) 
+		{
+			//send data to everyone except the sender
+			
+			UE_LOG(LogTemp, Warning, TEXT("Insert into map failed because client exists in map"));
+
+			std::map<FString, TClientDetails>::iterator iter = m_pConnectedClients->begin();
+			iter = m_pConnectedClients->find(EndPt.ToString());
+
+			if (iter != m_pConnectedClients->end())
+			{
+
+				if (m_pConnectedClients->size() > 0)
+				{
+					std::map<FString, TClientDetails>::iterator iter2 = m_pConnectedClients->begin();
+					while (iter2 != m_pConnectedClients->end())
+					{
+						if (EndPt.ToString() != iter2->first)
+						{
+							UDPSender_SendString(Data.Message, iter2->second.m_RemoteAddr, FName(*iter->second.m_strName));
+						}
+						++iter2;
+					}
+				}
+			}
+		}
+		else
+		{
+			//RemoteAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+			//
+			//RemoteAddr = EndPt.ToInternetAddr();
+			//RemoteAddr->SetPort(Data.Port);
+
+			CreateSenderSocket(FString(TEXT("theirSocket")));
+
+			UE_LOG(LogTemp, Warning, TEXT("Insert into map success"));
+
+			FSChatMsg newmessage; // make a new struct to send for replication
+			newmessage.Init(1, FText::FromString(Data.Name.ToString()), FText::FromString("Hi Server. I just joined the chat!!! :)")); // initialize the message struct for replication
+			ChatWidget->AddMessage(newmessage);
+
+
+			std::map<FString, TClientDetails>::iterator iter = m_pConnectedClients->begin();
+			iter = m_pConnectedClients->find(EndPt.ToString());
+
+			if (iter != m_pConnectedClients->end())
+			{
+				if (m_pConnectedClients->size() > 0)
+				{
+					if (m_pConnectedClients->size() > 0)
+					{
+						std::map<FString, TClientDetails>::iterator iter2 = m_pConnectedClients->begin();
+						while (iter2 != m_pConnectedClients->end())
+						{
+							FString message;
+							if (EndPt.ToString() != iter2->first)
+							{
+								message = Data.Name.ToString() + FString(TEXT(" just joined the chat."));
+								UDPSender_SendString(message, iter2->second.m_RemoteAddr, FName(*m_myName));
+							}
+							else
+							{
+								message = FString(TEXT("Welcome to the chat ")) + Data.Name.ToString();
+								UDPSender_SendString(message, iter2->second.m_RemoteAddr, FName(*m_myName));
+							}
+							++iter2;
+						}
+					}
+				}
+			}
+
+
+
+		}
+
+		//return true;
+	}
+	else
+	{
+		FSChatMsg newmessage; // make a new struct to send for replication
+		newmessage.Init(1, FText::FromString(Data.Name.ToString()), FText::FromString(Data.Message)); // initialize the message struct for replication
+		ChatWidget->AddMessage(newmessage);
+	}
 }
+
+void FchatPluginModule::CreateSenderSocket(const FString& YourChosenSocketName)
+{
+	SenderSocket = FUdpSocketBuilder(*YourChosenSocketName)
+		.AsReusable()
+		.WithBroadcast()
+		;
+
+	int32 SendSize = 2 * 1024 * 1024;
+	SenderSocket->SetSendBufferSize(SendSize, SendSize);
+	SenderSocket->SetReceiveBufferSize(SendSize, SendSize);
+}
+
 
 
 #undef LOCTEXT_NAMESPACE

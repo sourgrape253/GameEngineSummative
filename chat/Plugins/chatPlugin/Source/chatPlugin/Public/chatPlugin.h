@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+
 #include "CoreMinimal.h"
 #include "ModuleManager.h"
 #include "Networking.h"
@@ -14,7 +16,10 @@ class FMenuBuilder;
 
 struct FAnyCustomData
 {
-	FString Name = "GREAT!";
+	FIPv4Endpoint ipAddress;
+	int32 Port;
+	FName Name = "myname!";
+	FString Message = "GREAT to see you!";
 
 	FAnyCustomData()
 	{}
@@ -22,10 +27,21 @@ struct FAnyCustomData
 
 FORCEINLINE FArchive& operator<<(FArchive &Ar, FAnyCustomData& TheStruct)
 {
+	Ar << TheStruct.ipAddress;
+	Ar << TheStruct.Port;
 	Ar << TheStruct.Name;
-
+	Ar << TheStruct.Message;
 	return Ar;
 }
+
+struct TClientDetails
+{
+	FIPv4Endpoint m_endPoint;	
+	FString m_strName;
+	int32 m_iPort;
+	bool m_bIsActive;
+	TSharedPtr<FInternetAddr> m_RemoteAddr;
+};
 
 class FchatPluginModule : public IModuleInterface
 {
@@ -33,12 +49,14 @@ public:
 
 	//*****************************************Sending*****************************************
 	bool UDPSender_SendString(FString ToSend);
+	bool UDPSender_SendString(FString ToSend, TSharedPtr<FInternetAddr> _RemoteAddr, FName _name);
 
 	TSharedPtr<FInternetAddr> RemoteAddr;
 	FSocket* SenderSocket;
 
 	bool StartUDPSender(const FString& YourChosenSocketName, const FString& TheIP, const int32 ThePort);
 
+	void CreateSenderSocket(const FString& YourChosenSocketName);
 
 	//*****************************************Receiving*****************************************
 	FSocket* ListenSocket;
@@ -60,6 +78,12 @@ public:
 	int32 TheirReceiverPort;
 
 	bool m_bConnected;
+	bool m_bServer;
+
+	//server needs a map of names and the messages
+	std::map<FString, TClientDetails>* m_pConnectedClients;
+
+	FString m_myName;
 
 	//*****************************************Debug*****************************************
 	FORCEINLINE void ScreenMsg(const FString& Msg)
