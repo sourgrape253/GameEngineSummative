@@ -11,6 +11,7 @@
 #include "SlateBasics.h"
 #include "SChatWidget.h"
 
+
 class FToolBarBuilder;
 class FMenuBuilder;
 
@@ -111,8 +112,11 @@ private:
 
 	void AddToolbarExtension(FToolBarBuilder& Builder);
 	void AddMenuExtension(FMenuBuilder& Builder);
+	
+	//FOnTabClosedCallback OnTabClosed;
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
+	//SetOnWindowClosed(const FOnWindowClosed& InDelegate);
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

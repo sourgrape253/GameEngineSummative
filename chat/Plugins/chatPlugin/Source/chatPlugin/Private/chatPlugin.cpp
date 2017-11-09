@@ -8,6 +8,8 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "SChatWidget.h"
+#include "TabManager.h"
 
 static const FName chatPluginTabName("chatPlugin");
 
@@ -49,6 +51,7 @@ void FchatPluginModule::StartupModule()
 		.SetDisplayName(LOCTEXT("FchatPluginTabTitle", "chatPlugin"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 
+	
 
 	SenderSocket = NULL;
 	ListenSocket = NULL;
@@ -58,8 +61,8 @@ void FchatPluginModule::StartupModule()
 
 void FchatPluginModule::ShutdownModule()
 {
-	//FString message = m_myName + FString(TEXT(" just left the chat."));
-	//UDPSender_SendString(message);
+	FString message = m_myName + FString(TEXT(" just left the chat."));
+	UDPSender_SendString(message);
 
 	if (SenderSocket)
 	{
@@ -117,6 +120,18 @@ TSharedRef<SDockTab> FchatPluginModule::OnSpawnPluginTab(const FSpawnTabArgs& Sp
 			]
 		];
 }
+
+//TSharedRef<class SDockTab> FchatPluginModule::OnTabClosed(const FOnTabClosedCallback & InDelegate)
+//{
+//	FString message = m_myName + FString(TEXT(" just left the chat."));
+//	UDPSender_SendString(message);
+//
+//	return TSharedRef<class SDockTab>();
+//}
+
+//TSharedRef<class SWindow>FchatPluginModule
+
+
 
 void FchatPluginModule::PluginButtonClicked()
 {
@@ -429,3 +444,5 @@ void FchatPluginModule::CreateSenderSocket(const FString& YourChosenSocketName)
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FchatPluginModule, chatPlugin)
+
+

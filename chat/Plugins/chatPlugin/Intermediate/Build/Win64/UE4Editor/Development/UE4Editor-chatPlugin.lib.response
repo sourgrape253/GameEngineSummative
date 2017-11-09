@@ -7,7 +7,7 @@
 /IGNORE:4221
 /NODEFAULTLIB
 "C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\SharedPCH.UnrealEd.h.obj"
-"C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp.obj"
+"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp.obj"
 "C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\PCLaunch.rc.res"
 "C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\ModuleVersionResource.rc.inl.res"
-/OUT:"C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\UE4Editor-chatPlugin.lib"
+/OUT:"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\UE4Editor-chatPlugin.lib"

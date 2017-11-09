@@ -31,12 +31,12 @@ void SChatWidget::Construct(const FArguments& InArgs)
 			SNew(SHorizontalBox)
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
-			.MaxWidth(600.f)
+			.MaxWidth(2000.f)
 			[
 				SAssignNew(ChatInput, SEditableText) 
 				.OnTextCommitted(this, &SChatWidget::OnChatTextCommitted) 
 				.OnTextChanged(this, &SChatWidget::OnChatTextChanged) 
-				.ClearKeyboardFocusOnCommit(true)
+				.ClearKeyboardFocusOnCommit(false)
 				.Text(FText::FromString(""))
 				.ColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.9f)) 
 				//.HintText(FText::FromString("Please Enter your IP Address:"))
@@ -44,6 +44,7 @@ void SChatWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
+	FSlateApplication::Get().SetAllUserFocus(ChatInput);
 }
 
 TSharedRef<ITableRow> SChatWidget::OnGenerateRowForList(TSharedPtr< FSChatMsg > Item, const TSharedRef<STableViewBase>& OwnerTable)
@@ -240,7 +241,7 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 			}
 			
 			count++;
-			//FSlateApplication::Get().SetKeyboardFocus(ChatInput);
+			
 		}
 		ChatInput->SetText(FText()); // clear the chat box now were done with it		
 

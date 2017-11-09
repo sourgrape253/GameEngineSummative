@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-chat-5840.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\Engine\SharedPCH.Engine.h.obj"
+"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Intermediate\Build\Win64\UE4Editor\Development\chat\chat.cpp.obj"
+"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Intermediate\Build\Win64\UE4Editor\Development\chat\chatGameModeBase.cpp.obj"
+"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Intermediate\Build\Win64\UE4Editor\Development\chat\chat.generated.cpp.obj"
+"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\chat\PCLaunch.rc.res"
+"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\ModuleVersionResource.rc.inl.res"
+/OUT:"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Intermediate\Build\Win64\UE4Editor\Development\UE4Editor-chat-5840.lib"

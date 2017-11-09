@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\chat.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{20C50861-8744-4E85-BFB1-CB3D8C21FD67}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\chat.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\chatEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{4785E749-F2FF-4507-A93A-10F40DE054A6}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Plugins">
+			<UniqueIdentifier>{E583AB46-B82D-45DF-A4C8-E1A5FEE2C664}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Plugins\chatPlugin">
+			<UniqueIdentifier>{E02AA721-814D-458E-A048-A0C56A21B23B}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Plugins\chatPlugin\Source">
+			<UniqueIdentifier>{A9B9EEE2-D210-479C-8ADE-B4813892F220}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Plugins\chatPlugin\Source\chatPlugin">
+			<UniqueIdentifier>{CBAA06FF-E3DF-4D5D-9DAD-F655252B48CB}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Plugins\chatPlugin\Source\chatPlugin\chatPlugin.Build.cs">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin</Filter>
+		</None >
+		<Filter Include="Plugins\chatPlugin\Source\chatPlugin\Private">
+			<UniqueIdentifier>{06C7405E-CE83-41BC-AC9B-FE31BB777CCC}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Private\chatPlugin.cpp">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Private\chatPluginCommands.cpp">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Private\chatPluginStyle.cpp">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Private</Filter>
+		</ClCompile >
+		<ClCompile Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Private\SChatWidget.cpp">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Private</Filter>
+		</ClCompile >
+		<Filter Include="Plugins\chatPlugin\Source\chatPlugin\Public">
+			<UniqueIdentifier>{7B612706-F371-4FC4-B395-C155E4FFDAE9}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Public\chatPlugin.h">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Public\chatPluginCommands.h">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Public\chatPluginStyle.h">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Public</Filter>
+		</ClInclude >
+		<ClInclude Include="..\..\Plugins\chatPlugin\Source\chatPlugin\Public\SChatWidget.h">
+			<Filter>Plugins\chatPlugin\Source\chatPlugin\Public</Filter>
+		</ClInclude >
+		<None Include="..\..\Plugins\chatPlugin\chatPlugin.uplugin">
+			<Filter>Plugins\chatPlugin</Filter>
+		</None >
+		<Filter Include="Plugins\chatPlugin\Resources">
+			<UniqueIdentifier>{6C9141D4-CE09-437A-90DD-77A810BFD272}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Plugins\chatPlugin\Resources\ButtonIcon_40x.png">
+			<Filter>Plugins\chatPlugin\Resources</Filter>
+		</None >
+		<None Include="..\..\Plugins\chatPlugin\Resources\Icon128.png">
+			<Filter>Plugins\chatPlugin\Resources</Filter>
+		</None >
+		<Filter Include="Source\chat">
+			<UniqueIdentifier>{839CA1E0-4017-4758-A1BC-E00519AE2EBD}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\chat\chat.Build.cs">
+			<Filter>Source\chat</Filter>
+		</None >
+		<ClCompile Include="..\..\Source\chat\chat.cpp">
+			<Filter>Source\chat</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\chat\chat.h">
+			<Filter>Source\chat</Filter>
+		</ClInclude >
+		<ClCompile Include="..\..\Source\chat\chatGameModeBase.cpp">
+			<Filter>Source\chat</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\chat\chatGameModeBase.h">
+			<Filter>Source\chat</Filter>
+		</ClInclude >
+	</ItemGroup>
+</Project>

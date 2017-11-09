@@ -23,10 +23,10 @@
 /wd4838
 /w44668
 /I "C:\Program Files\Epic Games\UE_4.16\Engine\Source"
-/I "C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Source\chatPlugin\Private"
-/I "C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Source"
-/I "C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Source\chatPlugin\Public"
-/I "C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Source\chatPlugin"
+/I D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Source\chatPlugin\Private
+/I D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Source
+/I D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Source\chatPlugin\Public
+/I D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Source\chatPlugin
 /I "C:\Program Files\Epic Games\UE_4.16\Engine\Source\Runtime\Core\Public"
 /I "C:\Program Files\Epic Games\UE_4.16\Engine\Source\Runtime\Core\Public\Internationalization"
 /I "C:\Program Files\Epic Games\UE_4.16\Engine\Source\Runtime\Core\Public\Async"
@@ -326,9 +326,9 @@
 /FI"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\SharedPCH.UnrealEd.h"
 /Yu"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\SharedPCH.UnrealEd.h"
 /Fp"C:\Program Files\Epic Games\UE_4.16\Engine\Intermediate\Build\Win64\UE4Editor\Development\UnrealEd\SharedPCH.UnrealEd.h.pch"
-"C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp"
-/FI"C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Definitions.chatPlugin.h"
-/Fo"C:\Users\Charmaine\Documents\Unreal Projects\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp.obj"
+"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp"
+/FI"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Definitions.chatPlugin.h"
+/Fo"D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Intermediate\Build\Win64\UE4Editor\Development\chatPlugin\Module.chatPlugin.cpp.obj"
 /TP
 /GR-
 /W4
