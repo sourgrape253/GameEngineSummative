@@ -8,7 +8,18 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
 void SChatWidget::Construct(const FArguments& InArgs)
 {
-	//hint text need to be changed, check m_UDPinstance
+	FText hint = FText::FromString("Do you want to run a client or server (C/S)?");
+	if (m_UDPinstance)
+	{
+		if (!m_UDPinstance->bIsServerClientChosen)
+		{
+			hint = FText::FromString("Do you want to run a client or server (C/S)?");
+		}
+		else
+		{
+			hint = FText::FromString("Please type here");
+		}
+	}	
 
 	ChildSlot 
 	.VAlign(VAlign_Bottom)
@@ -41,11 +52,19 @@ void SChatWidget::Construct(const FArguments& InArgs)
 				.ClearKeyboardFocusOnCommit(true)
 				.Text(FText::FromString(""))
 				.ColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.9f)) 
-				.HintText(FText::FromString("Do you want to run a client or server (C/S)?"))
+				.HintText(hint)
 			]
 		]
 	];
 }
+
+//SChatWidget::~SChatWidget()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("Your message"));
+//
+//	//m_UDPinstance->UDPSender_SendString(FString(TEXT("closing closing")));
+//}
+
 
 TSharedRef<ITableRow> SChatWidget::OnGenerateRowForList(TSharedPtr< FSChatMsg > Item, const TSharedRef<STableViewBase>& OwnerTable)
 {

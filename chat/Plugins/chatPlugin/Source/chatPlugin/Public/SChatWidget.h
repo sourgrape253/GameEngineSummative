@@ -72,4 +72,6 @@ public:
 	void AddMessage(const FSChatMsg& newmessage); 
 
 	FchatPluginModule* m_UDPinstance;
+	
+	//~SChatWidget();
 };
