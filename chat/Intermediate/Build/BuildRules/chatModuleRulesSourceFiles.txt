@@ -1,4 +1,0 @@
-D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Source\chat\chat.Build.cs
-D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Plugins\chatPlugin\Source\chatPlugin\chatPlugin.Build.cs
-D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Source\chat.Target.cs
-D:\Users\joseph.new6687\Documents\GameEngineSummative\chat\Source\chatEditor.Target.cs

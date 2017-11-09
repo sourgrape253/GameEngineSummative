@@ -11,7 +11,6 @@
 #include "SlateBasics.h"
 #include "SChatWidget.h"
 
-
 class FToolBarBuilder;
 class FMenuBuilder;
 
@@ -81,25 +80,18 @@ public:
 	bool m_bConnected;
 	bool m_bServer;
 
-	//server needs a map of names and the messages
 	std::map<FString, TClientDetails>* m_pConnectedClients;
 
 	FString m_myName;
 
-	//*****************************************Debug*****************************************
-	FORCEINLINE void ScreenMsg(const FString& Msg)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *Msg);
-	}
-	FORCEINLINE void ScreenMsg(const FString& Msg, const float Value)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %f"), *Msg, Value));
-	}
-	FORCEINLINE void ScreenMsg(const FString& Msg, const FString& Msg2)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %s"), *Msg, *Msg2));
-	}
+	void ChatMessage(FText userName, FText message);
+	TSharedPtr<FInternetAddr> CreateRemoteAddress(FString ip, int32 port, bool &bIsValid); 
+	void SendToAll(FAnyCustomData Data, FString address, bool handshake);
 
+	bool bIsServerClientChosen = false;
+	bool bNameAdded = false;
+	bool bPortAdded = false;
+	bool bServerIPAdded = false;
 
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
@@ -112,11 +104,8 @@ private:
 
 	void AddToolbarExtension(FToolBarBuilder& Builder);
 	void AddMenuExtension(FMenuBuilder& Builder);
-	
-	//FOnTabClosedCallback OnTabClosed;
 
 	TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
-	//SetOnWindowClosed(const FOnWindowClosed& InDelegate);
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

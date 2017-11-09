@@ -6,12 +6,12 @@
 #include "Widgets/SCompoundWidget.h"
 #include "SlateBasics.h"
 
-unsigned const DEFAULT_SERVER_PORT = 50012; //Changed the default server port so that it does not clash with client port during broadcast scanning for servers
+unsigned const DEFAULT_SERVER_PORT = 50012; 
 unsigned const DEFAULT_CLIENT_PORT = 60013;
 
-struct FSChatMsg // Struct to hold the message data to be passed between classes
+struct FSChatMsg 
 {
-	UPROPERTY() // UProperty means this variable will be replicated
+	UPROPERTY() 
 		int32 Type;
 
 	UPROPERTY()
@@ -20,11 +20,10 @@ struct FSChatMsg // Struct to hold the message data to be passed between classes
 	UPROPERTY()
 		FText Text;
 
-	FText Timestamp; // Dont replicate time because we can set it locally once we receive the struct
-
+	FText Timestamp; 
 	double Created;
 
-	void Init(int32 NewType, FText NewUsername, FText NewText) // Assign only the vars we wish to replicate
+	void Init(int32 NewType, FText NewUsername, FText NewText) 
 	{
 		Type = NewType;
 		Username = NewUsername;
@@ -59,7 +58,6 @@ public:
 	{}
 	SLATE_END_ARGS()
 
-	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
 
 	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<FSChatMsg> Item, const TSharedRef<STableViewBase>& OwnerTable);
@@ -71,9 +69,7 @@ public:
 	void OnChatTextChanged(const FText& InText);
 	void OnChatTextCommitted(const FText& InText, ETextCommit::Type CommitMethod);
 
-	void AddMessage(const FSChatMsg& newmessage); // the final stage, this function takes the input and does the final placement in the chatbox
+	void AddMessage(const FSChatMsg& newmessage); 
 
 	FchatPluginModule* m_UDPinstance;
-
-	int count = 0;
 };
