@@ -13,31 +13,17 @@ static const FName chatPluginTabName("chatPlugin");
 
 #define LOCTEXT_NAMESPACE "FchatPluginModule"
 
+//called prior to shutting down the module
 void FchatPluginModule::PreUnloadCallback()
 {
 		if (m_bConnected && !m_bServer)
 		{
 			UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")));
 		}
-		//else if(m_bServer)
-		//{
-		//	std::map<FString, TClientDetails>::iterator iter = m_pConnectedClients->begin();
-
-		//	while (iter != m_pConnectedClients->end())
-		//	{
-		//		UDPSender_SendString(FString(TEXT("The server has disconnected from the chat. Good Bye.")), iter->second.m_RemoteAddr, FName(*m_myName));
-		//	}
-		//	//bool bIsValid;
-		//	//int32 Theport = 60012;
-		//	//TSharedPtr<FInternetAddr> __RemoteAddr = CreateRemoteAddress(FString(TEXT("192.168.1.6")), Theport, bIsValid);
-		//	//UDPSender_SendString(FString(TEXT("The server has disconnected from the chat. Good Bye.")), __RemoteAddr, FName("yahha"));
-		//}
+		
 }
-//bool FchatPluginModule::SupportsAutomaticShutdown()
-//{
-//
-//}
 
+//initialise everything
 void FchatPluginModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
@@ -80,6 +66,7 @@ void FchatPluginModule::StartupModule()
 	m_pConnectedClients = new std::map<FString, TClientDetails>;
 }
 
+//clear all pointers before shutdown
 void FchatPluginModule::ShutdownModule()
 {
 	if (SenderSocket)
@@ -110,6 +97,7 @@ void FchatPluginModule::ShutdownModule()
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(chatPluginTabName);
 }
 
+//creates the chat window and gets the local ip address
 TSharedRef<SDockTab> FchatPluginModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
 	bool canBind = false;
@@ -135,14 +123,18 @@ TSharedRef<SDockTab> FchatPluginModule::OnSpawnPluginTab(const FSpawnTabArgs& Sp
 
 	ChatWidget->m_UDPinstance = this;
 	
+	UE_LOG(LogTemp, Warning, TEXT("on spawn plugin tab"));
+
 	return newTab;
 }
 
 void FchatPluginModule::PluginButtonClicked()
 {
-	FGlobalTabmanager::Get()->InvokeTab(chatPluginTabName);
+	bWidgetStarted = false;
 
-	ChatWidget->m_UDPinstance = this;
+	UE_LOG(LogTemp, Warning, TEXT("plugin button clicked - before invoke tab"));
+
+	FGlobalTabmanager::Get()->InvokeTab(chatPluginTabName);
 }
 
 void FchatPluginModule::AddMenuExtension(FMenuBuilder& Builder)

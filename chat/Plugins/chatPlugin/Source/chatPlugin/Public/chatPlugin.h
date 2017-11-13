@@ -92,6 +92,9 @@ public:
 	bool bNameAdded = false;
 	bool bPortAdded = false;
 	bool bServerIPAdded = false;
+	bool bWidgetStarted = false;
+
+	FText m_hint = FText::FromString("Do you want to run a server or a client (C/S)?");
 
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
