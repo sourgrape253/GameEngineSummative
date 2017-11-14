@@ -16,11 +16,15 @@ static const FName chatPluginTabName("chatPlugin");
 //called prior to shutting down the module
 void FchatPluginModule::PreUnloadCallback()
 {
-		if (m_bConnected && !m_bServer)
-		{
-			UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")));
-		}
-		
+	if (m_bConnected && !m_bServer)
+	{
+		UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")));
+	}
+	//if (m_bConnected && m_bServer)
+	//{
+	//	
+	//	UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")));
+	//}
 }
 
 //initialise everything
@@ -123,16 +127,15 @@ TSharedRef<SDockTab> FchatPluginModule::OnSpawnPluginTab(const FSpawnTabArgs& Sp
 
 	ChatWidget->m_UDPinstance = this;
 	
-	UE_LOG(LogTemp, Warning, TEXT("on spawn plugin tab"));
+	ChatWidget->ChatInput->SetHintText(m_hint);
 
 	return newTab;
 }
 
+//opens the chat window
 void FchatPluginModule::PluginButtonClicked()
 {
 	bWidgetStarted = false;
-
-	UE_LOG(LogTemp, Warning, TEXT("plugin button clicked - before invoke tab"));
 
 	FGlobalTabmanager::Get()->InvokeTab(chatPluginTabName);
 }
@@ -147,6 +150,18 @@ void FchatPluginModule::AddToolbarExtension(FToolBarBuilder& Builder)
 	Builder.AddToolBarButton(FchatPluginCommands::Get().OpenPluginWindow);
 }
 
+// creates the internet address
+TSharedPtr<FInternetAddr> FchatPluginModule::CreateRemoteAddress(FString ip, int32 port, bool &bIsValid)
+{
+	TSharedPtr<FInternetAddr> _RemoteAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+
+	_RemoteAddr->SetIp(*ip, bIsValid);
+	_RemoteAddr->SetPort(port);
+
+	return _RemoteAddr;
+}
+
+//creates the sending socket
 void FchatPluginModule::CreateSenderSocket(const FString& YourChosenSocketName)
 {
 	SenderSocket = FUdpSocketBuilder(*YourChosenSocketName)
@@ -159,6 +174,7 @@ void FchatPluginModule::CreateSenderSocket(const FString& YourChosenSocketName)
 	SenderSocket->SetReceiveBufferSize(SendSize, SendSize);
 }
 
+//creates the remote address and the sending socket
 bool FchatPluginModule::StartUDPSender(const FString& YourChosenSocketName, const FString& TheIP, const int32 ThePort)
 {
 	bool bIsValid;
@@ -175,17 +191,25 @@ bool FchatPluginModule::StartUDPSender(const FString& YourChosenSocketName, cons
 	return true;
 }
 
+//sends a string to an address
 bool FchatPluginModule::UDPSender_SendString(FString ToSend)
 {
 	return UDPSender_SendString(ToSend, RemoteAddr, *m_myName);
 }
 
+//sends a string, given an address and a name
 bool FchatPluginModule::UDPSender_SendString(FString ToSend, TSharedPtr<FInternetAddr> _RemoteAddr, FName _name)
 {
 	if (!SenderSocket)
 	{
 		return false;
 	}
+	ESocketConnectionState state = SenderSocket->GetConnectionState();
+	if (state != ESocketConnectionState::SCS_Connected)
+	{
+		return false;
+	}
+	
 
 	FIPv4Address Addr;
 	FIPv4Address::Parse(MyReceivingIP, Addr);
@@ -197,20 +221,25 @@ bool FchatPluginModule::UDPSender_SendString(FString ToSend, TSharedPtr<FInterne
 	NewData.Port = MyReceivingPort;
 	NewData.ipAddress = Endpoint;
 
+	UE_LOG(LogTemp, Warning, TEXT("%i"), MyReceivingPort);
+
 	FArrayWriter Writer;
 	Writer << NewData;
 
 	int32 BytesSent = 0;
-	SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *_RemoteAddr);
+	//SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *_RemoteAddr);
+	ToSend = FString(TEXT("2"));
+	SenderSocket->SendTo((uint8*)&ToSend, sizeof(ToSend), BytesSent, *_RemoteAddr);
 
 	if (BytesSent <= 0)
 	{
 		return false;
 	}
-
+	
 	return true;
 }
 
+//creates listening socket and receiver
 bool FchatPluginModule::StartUDPReceiver(const FString& YourChosenSocketName, const FString& TheIP, const int32 ThePort)
 {
 	FIPv4Address Addr;
@@ -245,6 +274,7 @@ bool FchatPluginModule::StartUDPReceiver(const FString& YourChosenSocketName, co
 	return true;
 }
 
+// receive function handles the messages received
 void FchatPluginModule::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt)
 {
 	FAnyCustomData Data;
@@ -276,7 +306,6 @@ void FchatPluginModule::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4E
 
 			SendToAll(Data, EndPt.ToString(), ret.second);
 		}
-		//return true;
 	}
 	else
 	{
@@ -284,6 +313,7 @@ void FchatPluginModule::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4E
 	}
 }
 
+//send message to everyone
 void FchatPluginModule::SendToAll(FAnyCustomData Data, FString address, bool handshake)
 {
 	std::map<FString, TClientDetails>::iterator iter = m_pConnectedClients->begin();
@@ -316,6 +346,7 @@ void FchatPluginModule::SendToAll(FAnyCustomData Data, FString address, bool han
 	}
 }
 
+// add the message in the chat window
 void FchatPluginModule::ChatMessage(FText userName, FText message)
 {
 	FSChatMsg newmessage; 
@@ -323,15 +354,6 @@ void FchatPluginModule::ChatMessage(FText userName, FText message)
 	ChatWidget->AddMessage(newmessage);
 }
 
-TSharedPtr<FInternetAddr> FchatPluginModule::CreateRemoteAddress(FString ip, int32 port, bool &bIsValid)
-{
-	TSharedPtr<FInternetAddr> _RemoteAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
-
-	_RemoteAddr->SetIp(*ip, bIsValid);
-	_RemoteAddr->SetPort(port);
-
-	return _RemoteAddr;
-}
 
 #undef LOCTEXT_NAMESPACE
 	

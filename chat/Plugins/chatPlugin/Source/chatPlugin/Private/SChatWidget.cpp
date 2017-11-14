@@ -9,7 +9,6 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 //creates and setsup the chat window
 void SChatWidget::Construct(const FArguments& InArgs)
 {
-
 	ChildSlot 
 	.VAlign(VAlign_Bottom)
 	.HAlign(HAlign_Left)
@@ -41,7 +40,7 @@ void SChatWidget::Construct(const FArguments& InArgs)
 				.ClearKeyboardFocusOnCommit(false)
 				.Text(FText::FromString(""))
 				.ColorAndOpacity(FLinearColor(1.f, 1.f, 1.f, 0.9f)) 
-				.HintText(FText::FromString("Welcome to the Unreal Editor Chat. Please press enter 1 to proceed."))
+				.HintText(FText::FromString("Welcome to the Unreal Editor Chat."))
 			]
 		]
 	];
@@ -154,13 +153,6 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 				AddMessage(newmessage);
 			}
 
-			if (!m_UDPinstance->bWidgetStarted)
-			{
-				m_UDPinstance->bWidgetStarted = true;
-				ChatInput->SetText(FText());
-				return;
-			}
-
 			if (!m_UDPinstance->m_bConnected)
 			{
 				if (!m_UDPinstance->bIsServerClientChosen)
@@ -177,24 +169,21 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 							m_UDPinstance->CreateSenderSocket(FString(TEXT("theirSocket")));
 
 							ChatInput->SetHintText(FText::FromString("I am the server. Please do not type in here."));
-
-							m_UDPinstance->m_myName = FString(TEXT("Server"));
 							m_UDPinstance->m_hint = FText::FromString("I am the server. Please do not type in here.");
+
+							m_UDPinstance->m_myName = FString(TEXT("Server"));				
 
 							ChatInput->SetClearKeyboardFocusOnCommit(true);
 						}
 						else
 						{
 							ChatInput->SetHintText(FText::FromString("Something wrong with the server"));
-
 							m_UDPinstance->m_hint = FText::FromString("Something wrong with the server");
 						}
-
 					}
 					else
 					{
 						ChatInput->SetHintText(FText::FromString("What is your name? "));
-						
 						m_UDPinstance->m_hint = FText::FromString("What is your name? ");
 					}
 					m_UDPinstance->bIsServerClientChosen = true;
@@ -213,15 +202,11 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 						{
 							m_UDPinstance->MyReceivingPort++;
 						}
-					
 						ChatInput->SetHintText(FText::FromString("Please enter the Server's IP address: "));
-
-						m_UDPinstance->bPortAdded = true;
-
 						m_UDPinstance->m_hint = FText::FromString("Please enter the Server's IP address: ");
-						
-					}
-					
+
+						m_UDPinstance->bPortAdded = true;						
+					}				
 					else if (!m_UDPinstance->bServerIPAdded)
 					{
 						FString TheirReceiverIP = NFText.ToString();
@@ -245,7 +230,6 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 							m_UDPinstance->UDPSender_SendString(m_UDPinstance->m_myName);
 
 							ChatInput->SetHintText(FText::FromString("Type your messages here"));
-
 							m_UDPinstance->m_hint = FText::FromString("Type your messages here");
 
 							m_UDPinstance->m_bConnected = true;
@@ -255,7 +239,6 @@ void SChatWidget::OnChatTextCommitted(const FText& InText, ETextCommit::Type Com
 						else
 						{
 							ChatInput->SetHintText(FText::FromString("Please enter the CORRECT Server's IP address: "));
-
 							m_UDPinstance->m_hint = FText::FromString("Please enter the CORRECT Server's IP address: ");
 						}
 					}
