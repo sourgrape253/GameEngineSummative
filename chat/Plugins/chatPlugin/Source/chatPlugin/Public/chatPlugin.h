@@ -1,5 +1,17 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+//
+// File Name	: chatPlugin.h
+// Description	: chatPlugin declaration file.
+// Authors		: Charmaine Lim, Matthew Seymour, Joseph Newman
+//
+
 #pragma once
 
 #include <map>

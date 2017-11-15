@@ -1,5 +1,17 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+//
+// File Name	: chatPlugin.cpp
+// Description	: chatPlugin implementation file.
+// Authors		: Charmaine Lim, Matthew Seymour, Joseph Newman
+//
+
 #include "chatPlugin.h"
 #include "chatPluginStyle.h"
 #include "chatPluginCommands.h"
@@ -22,8 +34,12 @@ void FchatPluginModule::PreUnloadCallback()
 	}
 	//if (m_bConnected && m_bServer)
 	//{
-	//	
-	//	UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")));
+	//	std::map<FString, TClientDetails>::iterator iter = m_pConnectedClients->begin();
+	//	while (iter != m_pConnectedClients->end())
+	//	{
+	//		UDPSender_SendString(FString(TEXT("I have left the chat. Good Bye.")), iter->second.m_RemoteAddr, FName(*m_myName));
+	//		++iter;
+	//	}
 	//}
 }
 
@@ -204,12 +220,12 @@ bool FchatPluginModule::UDPSender_SendString(FString ToSend, TSharedPtr<FInterne
 	{
 		return false;
 	}
+
 	ESocketConnectionState state = SenderSocket->GetConnectionState();
 	if (state != ESocketConnectionState::SCS_Connected)
 	{
 		return false;
 	}
-	
 
 	FIPv4Address Addr;
 	FIPv4Address::Parse(MyReceivingIP, Addr);
@@ -221,16 +237,12 @@ bool FchatPluginModule::UDPSender_SendString(FString ToSend, TSharedPtr<FInterne
 	NewData.Port = MyReceivingPort;
 	NewData.ipAddress = Endpoint;
 
-	UE_LOG(LogTemp, Warning, TEXT("%i"), MyReceivingPort);
-
 	FArrayWriter Writer;
 	Writer << NewData;
 
 	int32 BytesSent = 0;
-	//SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *_RemoteAddr);
-	ToSend = FString(TEXT("2"));
-	SenderSocket->SendTo((uint8*)&ToSend, sizeof(ToSend), BytesSent, *_RemoteAddr);
-
+	SenderSocket->SendTo(Writer.GetData(), Writer.Num(), BytesSent, *_RemoteAddr);
+	
 	if (BytesSent <= 0)
 	{
 		return false;

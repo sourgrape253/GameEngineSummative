@@ -1,4 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name	: SChatWidget.cpp
+// Description	: SChatWidget implementation file.
+// Authors		: Charmaine Lim, Matthew Seymour, Joseph Newman
+//
 
 #include "SChatWidget.h"
 #include "SlateOptMacros.h"

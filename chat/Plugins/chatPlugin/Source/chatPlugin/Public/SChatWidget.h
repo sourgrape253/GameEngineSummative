@@ -1,4 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) 2016 Media Design School
+//
+// File Name	: SChatWidget.h
+// Description	: SChatWidget declaration file.
+// Authors		: Charmaine Lim, Matthew Seymour, Joseph Newman
+//
 
 #pragma once
 
@@ -6,8 +17,7 @@
 #include "Widgets/SCompoundWidget.h"
 #include "SlateBasics.h"
 
-unsigned const DEFAULT_SERVER_PORT = 50012; 
-unsigned const DEFAULT_CLIENT_PORT = 60013;
+unsigned const DEFAULT_SERVER_PORT = 20000; 
 
 struct FSChatMsg 
 {
@@ -72,6 +82,4 @@ public:
 	void AddMessage(const FSChatMsg& newmessage); 
 
 	FchatPluginModule* m_UDPinstance;
-	
-	//~SChatWidget();
 };
